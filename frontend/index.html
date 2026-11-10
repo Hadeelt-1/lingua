@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua 语伴 — Arabic ⇄ Chinese Companion</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Naskh+Arabic:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="seal">语</div>
+        <div class="brand-text">
+          <span class="brand-name">Lingua <span class="brand-zh">语伴</span></span>
+          <span class="brand-tag">Arabic ⇄ Chinese</span>
+        </div>
+      </div>
+      <button class="icon-btn" id="collapseSidebarBtn" title="Collapse sidebar" aria-label="Collapse sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 4L15 4C17.2091 4 19 5.79086 19 8L19 16C19 18.2091 17.2091 20 15 20L9 20C6.79086 20 5 18.2091 5 16L5 8C5 5.79086 6.79086 4 9 4Z" stroke="currentColor" stroke-width="1.5"/><path d="M10 4L10 20" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>New conversation</span>
+    </button>
+
+    <div class="history-label">History</div>
+    <nav class="history-list" id="historyList">
+      <!-- chat history items injected by JS -->
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="lang-toggle" id="uiLangToggle" role="tablist" aria-label="Interface language">
+        <button class="lang-opt active" data-lang="en" role="tab" aria-selected="true">EN</button>
+        <button class="lang-opt" data-lang="ar" role="tab" aria-selected="false">ع</button>
+        <button class="lang-opt" data-lang="zh" role="tab" aria-selected="false">中</button>
+      </div>
+      <div class="status-row" id="statusRow" title="Local model status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Checking Ollama…</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="openSidebarBtn" aria-label="Open sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <div class="direction-toggle" id="directionToggle" title="Translation direction">
+        <span class="dir-label dir-ar">العربية</span>
+        <button class="dir-switch" id="dirSwitchBtn" aria-label="Swap translation direction">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M7 7H17M17 7L13 3M17 7L13 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 17H7M7 17L11 13M7 17L11 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="dir-label dir-zh">中文</span>
+      </div>
+      <div class="topbar-spacer"></div>
+    </header>
+
+    <!-- ---------- WELCOME SCREEN ---------- -->
+    <section class="welcome" id="welcomeScreen">
+      <div class="welcome-seal">语</div>
+      <h1 class="welcome-title">Lingua <span class="zh-accent">语伴</span></h1>
+      <p class="welcome-subtitle" id="welcomeSubtitle">Your companion for Arabic and Chinese — translation, vocabulary, grammar, and correction.</p>
+
+      <div class="mode-chips" id="modeChips">
+        <button class="chip active" data-mode="chat">General</button>
+        <button class="chip" data-mode="translate">Translate</button>
+        <button class="chip" data-mode="vocabulary">Vocabulary</button>
+        <button class="chip" data-mode="grammar">Grammar</button>
+        <button class="chip" data-mode="correct">Correct my sentence</button>
+      </div>
+
+      <div class="suggestions" id="suggestions">
+        <button class="suggestion-card" data-prompt="Translate this to Chinese: الصداقة أهم من المال">
+          <span class="s-title">Translate a sentence</span>
+          <span class="s-sub">"الصداقة أهم من المال" → Chinese</span>
+        </button>
+        <button class="suggestion-card" data-prompt="What does 缘分 mean, with pinyin and an example sentence?">
+          <span class="s-title">Explain a word</span>
+          <span class="s-sub">缘分 — meaning, pinyin, example</span>
+        </button>
+        <button class="suggestion-card" data-prompt="Explain how to use 了 in Chinese grammar, with examples.">
+          <span class="s-title">Understand grammar</span>
+          <span class="s-sub">How does 了 work?</span>
+        </button>
+        <button class="suggestion-card" data-prompt="Correct this Chinese sentence: 我昨天去商店买了很多个苹果子。">
+          <span class="s-title">Correct my sentence</span>
+          <span class="s-sub">Check grammar &amp; word choice</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- CHAT VIEW ---------- -->
+    <section class="chat-view" id="chatView" hidden>
+      <div class="messages" id="messages"></div>
+    </section>
+
+    <!-- ---------- COMPOSER ---------- -->
+    <footer class="composer">
+      <div class="composer-modes" id="composerModes">
+        <button class="chip small active" data-mode="chat">General</button>
+        <button class="chip small" data-mode="translate">Translate</button>
+        <button class="chip small" data-mode="vocabulary">Vocabulary</button>
+        <button class="chip small" data-mode="grammar">Grammar</button>
+        <button class="chip small" data-mode="correct">Correct</button>
+      </div>
+      <div class="composer-box">
+        <textarea id="messageInput" rows="1" placeholder="Ask about translation, vocabulary, grammar…" dir="auto"></textarea>
+        <button class="send-btn" id="sendBtn" aria-label="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 11L21 3L13 21L11 13L3 11Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="composer-hint" id="composerHint">Lingua 语伴 only answers Arabic ⇄ Chinese language questions.</p>
+    </footer>
+
+  </main>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
